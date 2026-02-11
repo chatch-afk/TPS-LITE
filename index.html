@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tax Savings Calculator</title>
+  <title>ARK Academy — Tax Planning LITE</title>
   <style>
     :root{
       --bg:#0b1220;
@@ -166,15 +166,11 @@
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
         <div>
-          <h1>Tax Savings Calculator</h1>
-          <p>Multi-step framework • plug in your strategy logic</p>
+          <h1>ARK Academy — Tax Planning LITE</h1>
+          <p>Quick assessment • conservative preview</p>
         </div>
       </div>
-      <div class="btnrow">
-        <button id="btnReset">Reset</button>
-        <button id="btnShare">Copy Summary</button>
-        <button class="primary" id="btnExport">Export JSON</button>
-      </div>
+      
     </div>
 
     <div class="hero">
@@ -845,9 +841,6 @@
 
       btnBack: document.getElementById("btnBack"),
       btnNext: document.getElementById("btnNext"),
-      btnReset: document.getElementById("btnReset"),
-      btnShare: document.getElementById("btnShare"),
-      btnExport: document.getElementById("btnExport"),
       toast: document.getElementById("toast"),
       statusPill: document.getElementById("statusPill"),
       strategyList: document.getElementById("strategyList"),
@@ -866,7 +859,6 @@
       homeSqft: document.getElementById("homeSqft"),
       btnContinueHomeSqft: document.getElementById("btnContinueHomeSqft"),
 
-      // Question button groups
       q1Buttons: document.querySelectorAll("#yearsInBusiness .choice"),
       q2Buttons: document.querySelectorAll("#legalEntity .choice"),
       q3Buttons: document.querySelectorAll("#revenueRange .choice"),
@@ -1450,39 +1442,11 @@
         showStep(2);
       });
 
-      els.btnReset.addEventListener("click", () => {
-        hydrateDefaults();
-        showStep(0);
-        showToast("Reset.");
-      });
+      
 
-      els.btnShare.addEventListener("click", async () => {
-        const ctx = readInputs();
-        const result = compute(ctx);
-        try {
-          await navigator.clipboard.writeText(summary(ctx, result));
-          showToast("Summary copied.");
-        } catch {
-          showToast("Clipboard blocked by browser.");
-        }
-      });
+      
 
-      els.btnExport.addEventListener("click", () => {
-        const ctx = readInputs();
-        const result = compute(ctx);
-        const json = exportJSON(ctx, result);
-
-        const blob = new Blob([json], { type: "application/json;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "tax-savings-calculator-export.json";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        showToast("Exported JSON.");
-      });
+      
     }
 
     function num(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
@@ -1500,7 +1464,7 @@
       assert(typeof STRATEGY_RULES[0].compute === "function", "Strategy compute exists");
       assert(document.querySelectorAll(".stepPanel").length >= 18, "Has many steps (incl. Q1-Q15 + inputs + results)");
       assert(!!document.getElementById("strategyList"), "Strategy list exists on results step");
-      assert(els.btnExport && els.btnExport.addEventListener, "Export button wired");
+      
 
       // New tests
       assert(els.q4Buttons && els.q4Buttons.length >= 5, "Q4 net income buttons exist");
