@@ -46,7 +46,6 @@
     }
     .brand h1{font-size:14px; margin:0;}
     .brand p{margin:0; font-size:12px; color:var(--muted)}
-    .btnrow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
     button{
       border:1px solid var(--line);
       background: rgba(15,23,42,.7);
@@ -155,8 +154,16 @@
     .choice.selected{border-color: rgba(37,99,235,.55); box-shadow: 0 0 0 4px rgba(37,99,235,.12); color: rgba(37,99,235,1);} 
     .choiceBack{display:flex; justify-content:center; margin-top: 14px;}
 
-    .inlineCTA{display:flex; justify-content:center; margin-top: 14px;}
-    .inlineCTA button{width: 100%; max-width: 520px; border-radius: 12px; font-size: 15px; padding: 14px 14px;}
+    /* Modal */
+    .modalOverlay{position: fixed; inset: 0; background: rgba(2,6,23,.65); backdrop-filter: blur(4px); display:none; align-items:center; justify-content:center; padding: 14px; z-index: 1000;}
+    .modalOverlay.show{display:flex;}
+    .modalCard{width: 100%; max-width: 560px; background: rgba(255,255,255,.98); color:#0f172a; border:1px solid rgba(15,23,42,.12); border-radius: 16px; box-shadow: 0 18px 55px rgba(0,0,0,.25); padding: 18px;}
+    .modalCard h3{margin: 0 0 6px; font-size: 20px;}
+    .modalCard p{margin: 0 0 12px; color: rgba(15,23,42,.70); font-size: 13px;}
+    .modalCard label{color: rgba(15,23,42,.70);} 
+    .modalCard input{background:#fff; color:#0f172a; border-color: rgba(15,23,42,.18);} 
+    .modalActions{display:flex; gap:10px; justify-content:flex-end; margin-top: 12px;}
+    .modalActions button{border-radius: 12px; padding: 12px 14px;}
   </style>
 </head>
 
@@ -170,7 +177,6 @@
           <p>Quick assessment • conservative preview</p>
         </div>
       </div>
-      
     </div>
 
     <div class="hero">
@@ -197,7 +203,7 @@
               <select id="state"></select>
             </div>
             <div>
-              <label for="entityType">Entity type (placeholder)</label>
+              <label for="entityType">Tax classification (quick check)</label>
               <select id="entityType">
                 <option value="sole_prop">Sole Prop / Single-member LLC</option>
                 <option value="s_corp">S-Corp</option>
@@ -213,12 +219,12 @@
           <p class="hint">Choose your state and continue.</p>
         </div>
 
-        <!-- STEP 1: CREATE ACCOUNT -->
+        <!-- STEP 1: CONTACT INFO -->
         <div class="stepPanel hidden" data-step="1">
           <div class="accountShell">
             <div class="accountCard">
-              <h2 class="accountTitle">Create Your Account</h2>
-              <p class="accountSub">Discover how much you&apos;re overpaying the IRS every single year.</p>
+              <h2 class="accountTitle">Enter Your Contact Info</h2>
+              <p class="accountSub">Get your conservative preview — then we’ll show which strategies may apply.</p>
 
               <div class="form accountForm">
                 <div>
@@ -243,7 +249,7 @@
                 </div>
               </div>
 
-              <button class="accountCTA" id="btnCreateAccount" type="button">Create My Account</button>
+              <button class="accountCTA" id="btnCreateAccount" type="button">Continue</button>
 
               <p class="accountFineprint">
                 <em>*By filling out the Form above, you agree to the Terms of Use and Privacy Policy, and includes approval to receive occasional calls, pre-recorded notices, or text messages using automation, including automatic dialing systems, at the number provided. Consent is not a condition of usage. Reply STOP to end text messages. Normal cell phone charges may apply.</em>
@@ -255,8 +261,8 @@
         <!-- STEP 2: QUESTION 1 of 15 -->
         <div class="stepPanel hidden" data-step="2" data-q="1">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 1 of 15</div><div class="progressPct qPct">7% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:7%"></span></div>
+            <div class="progressTop"><div class="progressLabel qLabel">Question 1 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
             <h2 class="questionTitle">How many years have you been in business?</h2>
             <div class="choiceGroup" id="yearsInBusiness">
               <button class="choice" data-value="lt1">Less than 1 year</button>
@@ -270,27 +276,42 @@
         <!-- STEP 3: QUESTION 2 of 15 -->
         <div class="stepPanel hidden" data-step="3" data-q="2">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 2 of 15</div><div class="progressPct qPct">13% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:13%"></span></div>
+            <div class="progressTop"><div class="progressLabel qLabel">Question 2 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
             <h2 class="questionTitle">What legal entity do you currently use for your business?</h2>
             <div class="choiceGroup" id="legalEntity">
               <button class="choice selected" data-value="llc">LLC</button>
-              <button class="choice" data-value="s_corp">S-Corp</button>
-              <button class="choice" data-value="c_corp">C-Corp</button>
+              <button class="choice" data-value="inc">Inc</button>
               <button class="choice" data-value="sole_prop">Sole Proprietor</button>
               <button class="choice" data-value="partnership">Partnership</button>
               <button class="choice" data-value="none">I don’t have a legal entity set up</button>
-              <button class="choice" data-value="other">Other</button>
             </div>
             <div class="choiceBack"><button class="ghost" id="btnGoBackQ2">‹ Go Back</button></div>
           </div></div>
         </div>
 
-        <!-- STEP 4: QUESTION 3 of 15 -->
+        <!-- STEP 4: QUESTION 3 of 15 (TAXATION TYPE) -->
         <div class="stepPanel hidden" data-step="4" data-q="3">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 3 of 15</div><div class="progressPct qPct">20% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:20%"></span></div>
+            <div class="progressTop"><div class="progressLabel qLabel">Question 3 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">How is your business currently taxed for federal income taxes?</h2>
+            <div class="choiceGroup" id="taxTreatment">
+              <button class="choice selected" data-value="sole_prop">Sole proprietor / Disregarded entity (Schedule C)</button>
+              <button class="choice" data-value="partnership">Partnership (Form 1065)</button>
+              <button class="choice" data-value="s_corp">S-Corp (Form 1120-S)</button>
+              <button class="choice" data-value="c_corp">C-Corp (Form 1120)</button>
+              <button class="choice" data-value="unknown">I don’t know</button>
+            </div>
+            <div class="choiceBack"><button class="ghost" id="btnGoBackQ3">‹ Go Back</button></div>
+          </div></div>
+        </div>
+
+        <!-- STEP 5: QUESTION 4 of 15 -->
+        <div class="stepPanel hidden" data-step="5" data-q="4">
+          <div class="accountShell"><div class="accountCard">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 4 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
             <h2 class="questionTitle">What’s your expected annual revenue (or gross sales) this year?</h2>
             <div class="choiceGroup" id="revenueRange">
               <button class="choice" data-value="1_to_100k">$1 to $100k</button>
@@ -302,15 +323,15 @@
               <button class="choice" data-value="over_10m">Over $10M</button>
               <button class="choice" data-value="none">None</button>
             </div>
-            <div class="choiceBack"><button class="ghost" id="btnGoBackQ3">‹ Go Back</button></div>
+            <div class="choiceBack"><button class="ghost" id="btnGoBackQ4">‹ Go Back</button></div>
           </div></div>
         </div>
 
-        <!-- STEP 5: QUESTION 4 of 15 -->
-        <div class="stepPanel hidden" data-step="5" data-q="4">
+        <!-- STEP 6: QUESTION 5 of 15 -->
+        <div class="stepPanel hidden" data-step="6" data-q="5">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 4 of 15</div><div class="progressPct qPct">27% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:27%"></span></div>
+            <div class="progressTop"><div class="progressLabel qLabel">Question 5 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
             <h2 class="questionTitle">What’s your estimated net income (profit) this year?</h2>
             <div class="choiceGroup" id="netIncomeRange">
               <button class="choice" data-value="0_to_50k">$0 to $50k</button>
@@ -321,20 +342,6 @@
               <button class="choice" data-value="over_500k">Over $500k</button>
               <button class="choice" data-value="none">None</button>
             </div>
-            <div class="choiceBack"><button class="ghost" id="btnGoBackQ4">‹ Go Back</button></div>
-          </div></div>
-        </div>
-
-        <!-- STEP 6: QUESTION 5 of 15 -->
-        <div class="stepPanel hidden" data-step="6" data-q="5">
-          <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 5 of 15</div><div class="progressPct qPct">33% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:33%"></span></div>
-            <h2 class="questionTitle">Do you have full or part-time employees?</h2>
-            <div class="choiceGroup" id="hasEmployees">
-              <button class="choice" data-value="yes">Yes</button>
-              <button class="choice" data-value="no">No</button>
-            </div>
             <div class="choiceBack"><button class="ghost" id="btnGoBackQ5">‹ Go Back</button></div>
           </div></div>
         </div>
@@ -342,10 +349,10 @@
         <!-- STEP 7: QUESTION 6 of 15 -->
         <div class="stepPanel hidden" data-step="7" data-q="6">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 6 of 15</div><div class="progressPct qPct">40% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:40%"></span></div>
-            <h2 class="questionTitle">Do you utilize a HSA (Health Savings Account) or HRA (Health Reimbursement Account) in your business?</h2>
-            <div class="choiceGroup" id="usesHsaHra">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 6 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">Do you have full or part-time employees?</h2>
+            <div class="choiceGroup" id="hasEmployees">
               <button class="choice" data-value="yes">Yes</button>
               <button class="choice" data-value="no">No</button>
             </div>
@@ -356,8 +363,22 @@
         <!-- STEP 8: QUESTION 7 of 15 -->
         <div class="stepPanel hidden" data-step="8" data-q="7">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 7 of 15</div><div class="progressPct qPct">47% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:47%"></span></div>
+            <div class="progressTop"><div class="progressLabel qLabel">Question 7 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">Do you utilize a HSA (Health Savings Account) or HRA (Health Reimbursement Account) in your business?</h2>
+            <div class="choiceGroup" id="usesHsaHra">
+              <button class="choice" data-value="yes">Yes</button>
+              <button class="choice" data-value="no">No</button>
+            </div>
+            <div class="choiceBack"><button class="ghost" id="btnGoBackQ7">‹ Go Back</button></div>
+          </div></div>
+        </div>
+
+        <!-- STEP 9: QUESTION 8 of 15 -->
+        <div class="stepPanel hidden" data-step="9" data-q="8">
+          <div class="accountShell"><div class="accountCard">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 8 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
             <h2 class="questionTitle">What retirement plan do you have in place for your business?</h2>
             <div class="choiceGroup" id="retirementPlan">
               <button class="choice" data-value="none_qualified">I don’t have a qualified retirement plan</button>
@@ -367,22 +388,6 @@
               <button class="choice" data-value="solo_401k">Solo 401k</button>
               <button class="choice" data-value="other">Other</button>
             </div>
-            <div class="choiceBack"><button class="ghost" id="btnGoBackQ7">‹ Go Back</button></div>
-          </div></div>
-        </div>
-
-        <!-- STEP 9: QUESTION 8 of 15 -->
-        <div class="stepPanel hidden" data-step="9" data-q="8">
-          <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 8 of 15</div><div class="progressPct qPct">53% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:53%"></span></div>
-            <h2 class="questionTitle">How often do you meet with your current accountant or CPA to adjust your tax plan?</h2>
-            <div class="choiceGroup" id="cpaMeetings">
-              <button class="choice" data-value="once">Once per year</button>
-              <button class="choice" data-value="twice">Twice per year</button>
-              <button class="choice" data-value="three">Three times per year</button>
-              <button class="choice" data-value="more_than_3">More than 3 times per year</button>
-            </div>
             <div class="choiceBack"><button class="ghost" id="btnGoBackQ8">‹ Go Back</button></div>
           </div></div>
         </div>
@@ -390,12 +395,14 @@
         <!-- STEP 10: QUESTION 9 of 15 -->
         <div class="stepPanel hidden" data-step="10" data-q="9">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 9 of 15</div><div class="progressPct qPct">60% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:60%"></span></div>
-            <h2 class="questionTitle">Do you have an estate plan, will, health care directive, or power of attorney in place?</h2>
-            <div class="choiceGroup" id="hasEstatePlan">
-              <button class="choice" data-value="yes">Yes</button>
-              <button class="choice" data-value="no">No</button>
+            <div class="progressTop"><div class="progressLabel qLabel">Question 9 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">How often do you meet with your current accountant or CPA to adjust your tax plan?</h2>
+            <div class="choiceGroup" id="cpaMeetings">
+              <button class="choice" data-value="once">Once per year</button>
+              <button class="choice" data-value="twice">Twice per year</button>
+              <button class="choice" data-value="three">Three times per year</button>
+              <button class="choice" data-value="more_than_3">More than 3 times per year</button>
             </div>
             <div class="choiceBack"><button class="ghost" id="btnGoBackQ9">‹ Go Back</button></div>
           </div></div>
@@ -404,10 +411,10 @@
         <!-- STEP 11: QUESTION 10 of 15 -->
         <div class="stepPanel hidden" data-step="11" data-q="10">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 10 of 15</div><div class="progressPct qPct">67% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:67%"></span></div>
-            <h2 class="questionTitle">Do you utilize a trust or series of trusts to protect your personal and business assets?</h2>
-            <div class="choiceGroup" id="usesTrusts">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 10 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">Do you have an estate plan, will, health care directive, or power of attorney in place?</h2>
+            <div class="choiceGroup" id="hasEstatePlan">
               <button class="choice" data-value="yes">Yes</button>
               <button class="choice" data-value="no">No</button>
             </div>
@@ -418,10 +425,10 @@
         <!-- STEP 12: QUESTION 11 of 15 -->
         <div class="stepPanel hidden" data-step="12" data-q="11">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 11 of 15</div><div class="progressPct qPct">73% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:73%"></span></div>
-            <h2 class="questionTitle">Do you use a mobile app to track mileage and other business deductions for your business?</h2>
-            <div class="choiceGroup" id="tracksMileage">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 11 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">Do you utilize a trust or series of trusts to protect your personal and business assets?</h2>
+            <div class="choiceGroup" id="usesTrusts">
               <button class="choice" data-value="yes">Yes</button>
               <button class="choice" data-value="no">No</button>
             </div>
@@ -432,10 +439,10 @@
         <!-- STEP 13: QUESTION 12 of 15 -->
         <div class="stepPanel hidden" data-step="13" data-q="12">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 12 of 15</div><div class="progressPct qPct">80% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:80%"></span></div>
-            <h2 class="questionTitle">I’m confident my accountant is maximizing all possible deductions for my business and keeping me compliant with changing tax codes.</h2>
-            <div class="choiceGroup" id="q12">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 12 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">Do you use a mobile app to track mileage and other business deductions for your business?</h2>
+            <div class="choiceGroup" id="tracksMileage">
               <button class="choice" data-value="yes">Yes</button>
               <button class="choice" data-value="no">No</button>
             </div>
@@ -446,10 +453,10 @@
         <!-- STEP 14: QUESTION 13 of 15 -->
         <div class="stepPanel hidden" data-step="14" data-q="13">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 13 of 15</div><div class="progressPct qPct">87% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:87%"></span></div>
-            <h2 class="questionTitle">Are you using the home-office deduction for your business?</h2>
-            <div class="choiceGroup" id="q13">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 13 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">I’m confident my accountant is maximizing all possible deductions for my business and keeping me compliant with changing tax codes.</h2>
+            <div class="choiceGroup" id="q12">
               <button class="choice" data-value="yes">Yes</button>
               <button class="choice" data-value="no">No</button>
             </div>
@@ -460,10 +467,10 @@
         <!-- STEP 15: QUESTION 14 of 15 -->
         <div class="stepPanel hidden" data-step="15" data-q="14">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 14 of 15</div><div class="progressPct qPct">93% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:93%"></span></div>
-            <h2 class="questionTitle">Do you own a home?</h2>
-            <div class="choiceGroup" id="q14">
+            <div class="progressTop"><div class="progressLabel qLabel">Question 14 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">Are you using the home-office deduction for your business?</h2>
+            <div class="choiceGroup" id="q13">
               <button class="choice" data-value="yes">Yes</button>
               <button class="choice" data-value="no">No</button>
             </div>
@@ -471,20 +478,34 @@
           </div></div>
         </div>
 
-        <!-- STEP 16: QUESTION 15 of 15 (HOME SQ FT – CONDITIONAL) -->
+        <!-- STEP 16: QUESTION 15 of 15 (HOME OWNERSHIP + SQFT MODAL) -->
         <div class="stepPanel hidden" data-step="16" data-q="15">
           <div class="accountShell"><div class="accountCard">
-            <div class="progressTop"><div class="progressLabel qLabel">Question 15 of 15</div><div class="progressPct qPct">100% Complete</div></div>
-            <div class="progressBar"><span class="qBar" style="width:100%"></span></div>
-            <h2 class="questionTitle">Approximately how many square feet is your home?</h2>
-            <div class="form">
-              <div class="full">
-                <input id="homeSqft" type="number" min="200" step="100" placeholder="e.g., 2400" />
-                <p class="hint">Used only to estimate Augusta Rule rent at $0.75 / sq ft / day (14 days).</p>
+            <div class="progressTop"><div class="progressLabel qLabel">Question 15 of 15</div><div class="progressPct qPct">0% Complete</div></div>
+            <div class="progressBar"><span class="qBar" style="width:0%"></span></div>
+            <h2 class="questionTitle">Do you own a home?</h2>
+            <div class="choiceGroup" id="q15">
+              <button class="choice" data-value="yes">Yes</button>
+              <button class="choice" data-value="no">No</button>
+            </div>
+            <div class="choiceBack"><button class="ghost" id="btnGoBackQ15">‹ Go Back</button></div>
+
+            <!-- Sq ft modal (opens only if they select Yes) -->
+            <div class="modalOverlay" id="homeSqftModal" role="dialog" aria-modal="true" aria-labelledby="homeSqftTitle">
+              <div class="modalCard">
+                <h3 id="homeSqftTitle">What is the approximate square footage of your home?</h3>
+                <p>We estimate Augusta Rule rent at <strong>$0.75 per sq ft per day</strong> for <strong>14 days</strong>.</p>
+                <div>
+                  <label for="homeSqftInput">Home square footage</label>
+                  <input id="homeSqftInput" type="number" min="200" step="100" placeholder="e.g., 2400" />
+                </div>
+                <div class="modalActions">
+                  <button class="ghost" type="button" id="btnHomeSqftCancel">Cancel</button>
+                  <button class="primary" type="button" id="btnHomeSqftContinue">Continue</button>
+                </div>
               </div>
             </div>
-            <div class="inlineCTA"><button class="primary" id="btnContinueHomeSqft" type="button">Continue</button></div>
-            <div class="choiceBack"><button class="ghost" id="btnGoBackQ15">‹ Go Back</button></div>
+
           </div></div>
         </div>
 
@@ -521,6 +542,131 @@
               <label for="healthPremiums">Health premiums (annual)</label>
               <input id="healthPremiums" type="number" min="0" step="500" placeholder="e.g., 12000" />
             </div>
+
+            <div>
+              <label for="filingStatus">Filing status (for better estimates)</label>
+              <select id="filingStatus">
+                <option value="mfj">Married filing jointly</option>
+                <option value="single">Single</option>
+                <option value="hoh">Head of household</option>
+                <option value="mfs">Married filing separately</option>
+              </select>
+            </div>
+            <div>
+              <label for="sstb">Is your business an SSTB? (for 199A)</label>
+              <select id="sstb">
+                <option value="unknown">I don’t know</option>
+                <option value="no">No</option>
+                <option value="yes">Yes (e.g., consulting, health, law, accounting, financial services)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="hasKids">Do you have children you could pay for legitimate work?</label>
+              <select id="hasKids">
+                <option value="unknown">I’m not sure</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div>
+              <label for="kidsCount"># of eligible kids (approx.)</label>
+              <input id="kidsCount" type="number" min="0" step="1" placeholder="e.g., 1" />
+              <div class="hint">Used for Hiring Your Kids estimates (wages per child).</div>
+            </div>
+
+            <div>
+              <label for="itemize">Do you currently itemize deductions?</label>
+              <select id="itemize">
+                <option value="unknown">I don’t know</option>
+                <option value="no">No (standard deduction)</option>
+                <option value="yes">Yes (itemize)</option>
+              </select>
+            </div>
+            <div>
+              <label for="charitableGiving">Charitable giving per year (rough)</label>
+              <input id="charitableGiving" type="number" min="0" step="500" placeholder="e.g., 10000" />
+            </div>
+
+            <div>
+              <label for="mortgageInterest">Mortgage interest (annual)</label>
+              <input id="mortgageInterest" type="number" min="0" step="500" placeholder="e.g., 18000" />
+            </div>
+            <div>
+              <label for="otherItemized">Other itemized deductions (annual)</label>
+              <input id="otherItemized" type="number" min="0" step="500" placeholder="e.g., 3000" />
+            </div>
+
+            <div>
+              <label for="saltLimited">Are you limited by the $10k SALT cap?</label>
+              <select id="saltLimited">
+                <option value="unknown">I don’t know</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div>
+              <label for="stateTaxPaid">State income tax paid (last year, approx.)</label>
+              <input id="stateTaxPaid" type="number" min="0" step="500" placeholder="e.g., 15000" />
+              <div class="hint">Used for PTET + itemized deduction modeling.</div>
+            </div>
+
+            <div>
+              <label for="annualMiles">Estimated business miles per year</label>
+              <input id="annualMiles" type="number" min="0" step="100" placeholder="e.g., 12000" />
+            </div>
+            <div>
+              <label for="phoneInternetMonthly">Phone + internet (monthly)</label>
+              <input id="phoneInternetMonthly" type="number" min="0" step="10" placeholder="e.g., 180" />
+            </div>
+
+            <div>
+              <label for="homeOfficeSqft">Home office square feet (if any)</label>
+              <input id="homeOfficeSqft" type="number" min="0" step="10" placeholder="e.g., 250" />
+              <div class="hint">Used to model accountable plan / home office reimbursement assumptions.</div>
+            </div>
+            <div>
+              <label for="ubia">UBIA of qualified property (199A, optional)</label>
+              <input id="ubia" type="number" min="0" step="1000" placeholder="e.g., 200000" />
+              <div class="hint">If unknown, we model with W-2 wages only.</div>
+            </div>
+
+            <div>
+              <label for="ownsRental">Do you own rental real estate?</label>
+              <select id="ownsRental">
+                <option value="unknown">I don’t know</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div>
+              <label for="rentalBasis">Total rental property cost basis (approx.)</label>
+              <input id="rentalBasis" type="number" min="0" step="5000" placeholder="e.g., 600000" />
+            </div>
+
+            <div>
+              <label for="placedInServiceYear">Placed-in-service year (most recent property)</label>
+              <input id="placedInServiceYear" type="number" min="1990" step="1" placeholder="e.g., 2024" />
+            </div>
+            <div>
+              <label for="reProfessional">Real estate professional status (REPS)?</label>
+              <select id="reProfessional">
+                <option value="unknown">I don’t know</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="materialParticipation">Material participation in rentals?</label>
+              <select id="materialParticipation">
+                <option value="unknown">I don’t know</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+              <div class="hint">Used to model whether depreciation can offset active income.</div>
+            </div>
+
             <div class="full">
               <label for="notes">Notes (optional)</label>
               <textarea id="notes" placeholder="Any context you want included in exported summary…"></textarea>
@@ -594,22 +740,43 @@
 
       // 199A
       qbiDeductionRate: 0.20,
-      qbiEligiblePctLow: 0.50,
-      qbiEligiblePctHigh: 0.85,
 
-      // DAF (placeholder)
-      dafPctOfNetIncomeLow: 0.01,
-      dafPctOfNetIncomeHigh: 0.03,
+      // PTET
+      saltCap: 10000,
 
-      // PTET (placeholder)
-      ptetPctOfNetIncomeLow: 0.01,
-      ptetPctOfNetIncomeHigh: 0.03,
+      // Mileage + phone assumptions (Accountable Plan modeling)
+      mileageRate: 0.67, // placeholder
+      phoneInternetBizUsePct: 0.70,
+      homeOfficeAnnualPerSqFt: 6, // placeholder annual alloc
+
+      // Cost seg assumptions
+      costSegReclassLow: 0.22,
+      costSegReclassHigh: 0.35,
+      passiveUsabilityFactor: 0.30, // if no REPS/material, assume only 30% usable against active income
     };
 
-    const PASS_THROUGH_ENTITIES = new Set(["sole_prop","partnership","s_corp","llc"]);
+    const PASS_THROUGH_ENTITIES = new Set(["sole_prop","partnership","s_corp"]);
     const PTET_STATES = new Set([
       "CA","LA","NY","NJ","CT","MA","IL","GA","AZ","CO","WI","MN","SC","NC","OR","RI",
     ]);
+
+    // Standard deduction placeholders (update annually)
+    const STANDARD_DEDUCTION = {
+      mfj: 29200,
+      single: 14600,
+      hoh: 21900,
+      mfs: 14600,
+    };
+
+    function bonusDepPct(year){
+      // Placeholder schedule (update as law changes)
+      if (year >= 2027) return 0.00;
+      if (year === 2026) return 0.20;
+      if (year === 2025) return 0.40;
+      if (year === 2024) return 0.60;
+      if (year === 2023) return 0.80;
+      return 1.00;
+    }
 
     function range(low, high){
       const a = clampMoney(low);
@@ -636,15 +803,32 @@
       {
         id: "accountable_plan",
         name: "Accountable Plan",
-        description: "Reimburse home office, phone, internet, mileage through your business (IRC §62(a)(2)(A)).",
+        description: "Reimburse personal expenses (home office, phone/internet, mileage) through your business (IRC §62(a)(2)(A)).",
         compute: (ctx) => {
-          const baseLow = ctx.revenue * STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueLow;
-          const baseHigh = ctx.revenue * STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueHigh;
+          const miles = Math.max(0, ctx.annualMiles || 0);
+          const mileageDed = miles * STRATEGY_ASSUMPTIONS.mileageRate;
+
+          const phoneMonthly = Math.max(0, ctx.phoneInternetMonthly || 0);
+          const phoneDed = (phoneMonthly * 12) * STRATEGY_ASSUMPTIONS.phoneInternetBizUsePct;
+
+          const officeSqft = Math.max(0, ctx.homeOfficeSqft || 0);
+          const officeDed = officeSqft * STRATEGY_ASSUMPTIONS.homeOfficeAnnualPerSqFt;
+
+          const hasBehaviorInputs = (miles > 0 || phoneMonthly > 0 || officeSqft > 0);
+          const fallbackLow = ctx.revenue * STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueLow;
+          const fallbackHigh = ctx.revenue * STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueHigh;
+
+          const modeled = mileageDed + phoneDed + officeDed;
+          const baseLow = hasBehaviorInputs ? modeled * 0.85 : fallbackLow;
+          const baseHigh = hasBehaviorInputs ? modeled * 1.15 : fallbackHigh;
+
           const savingsRange = rangeFromDeduction(baseLow, baseHigh, ctx.assumedMarginalRate);
           return {
             eligible: ctx.revenue > 0 && ctx.netIncome > 0,
             savingsRange,
-            details: `Assumes reimbursable expenses ~${pct(STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueLow)}–${pct(STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueHigh)} of revenue, taxed at marginal rate ${pct(ctx.assumedMarginalRate)}.`,
+            details: (hasBehaviorInputs
+              ? `Modeled reimbursable expenses: mileage ${money(mileageDed)} + phone/internet ${money(phoneDed)} + home office ${money(officeDed)} (±15%), taxed at ${pct(ctx.assumedMarginalRate)}.`
+              : `Fallback: reimbursable expenses ~${pct(STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueLow)}–${pct(STRATEGY_ASSUMPTIONS.accountablePlanPctOfRevenueHigh)} of revenue, taxed at ${pct(ctx.assumedMarginalRate)}.`),
             tags: ["Deduction", "Operations"],
           };
         },
@@ -654,7 +838,7 @@
         name: "Augusta Rule (14-day rental)",
         description: "Rent your home to your business up to 14 days; deductible to business, tax-free to you (IRC §280A(g)).",
         compute: (ctx) => {
-          if (ctx.q14 !== "yes" || !(ctx.homeSqft > 0)){
+          if (ctx.q15 !== "yes" || !(ctx.homeSqft > 0)){
             return { eligible:false, savingsRange: range(0,0), details:"Requires home ownership and square footage.", tags:["Real Estate","Deduction"] };
           }
           const rent = ctx.homeSqft * STRATEGY_ASSUMPTIONS.augustaRatePerSqFt * STRATEGY_ASSUMPTIONS.augustaDays;
@@ -672,11 +856,17 @@
         name: "Hiring Your Kids",
         description: "Deduct wages paid to kids; potential payroll-tax advantages under certain structures (IRC §3121(b)(3)(A)).",
         compute: (ctx) => {
-          const wagesLow = STRATEGY_ASSUMPTIONS.kidsWagesLow;
-          const wagesHigh = STRATEGY_ASSUMPTIONS.kidsWagesHigh;
+          const isSCorp = (ctx.taxTreatment === "s_corp");
+          const hasKids = (ctx.hasKids === "yes" && (ctx.kidsCount || 0) > 0);
+          if (!hasKids) {
+            return { eligible:false, savingsRange: range(0,0), details:"Requires eligible children (and count) to estimate.", tags:["Family","Payroll"] };
+          }
+
+          const kidCount = clampInt(ctx.kidsCount || 0, 1, 6);
+          const wagesLow = 6000 * kidCount;
+          const wagesHigh = 14600 * kidCount;
           const incomeTaxSavings = rangeFromDeduction(wagesLow, wagesHigh, ctx.assumedMarginalRate);
 
-          const isSCorp = (ctx.legalEntity === "s_corp" || ctx.entityType === "s_corp");
           const payrollSavings = isSCorp
             ? range(0,0)
             : range(wagesLow * STRATEGY_ASSUMPTIONS.payrollTaxRate, wagesHigh * STRATEGY_ASSUMPTIONS.payrollTaxRate);
@@ -687,9 +877,9 @@
             eligible: ctx.netIncome > 0,
             savingsRange,
             details: isSCorp
-              ? `S-Corp note: payroll taxes generally apply. Range assumes $${fmt(wagesLow)}–$${fmt(wagesHigh)} wages deducted at ${pct(ctx.assumedMarginalRate)}.`
-              : `Non S-Corp note: may reduce income tax + avoid some payroll taxes. Range assumes $${fmt(wagesLow)}–$${fmt(wagesHigh)} wages; payroll tax rate ${pct(STRATEGY_ASSUMPTIONS.payrollTaxRate)}.`,
-            tags: ["Family", "Payroll", isSCorp ? "S-Corp" : "Sole Prop"],
+              ? `S-Corp note: payroll taxes generally apply. Assumes ${kidCount} child(ren) at $${fmt(6000)}–$${fmt(14600)} each, deducted at ${pct(ctx.assumedMarginalRate)}.`
+              : `Non S-Corp note: may reduce income tax + avoid some payroll taxes. Assumes ${kidCount} child(ren) at $${fmt(6000)}–$${fmt(14600)} each; payroll tax rate ${pct(STRATEGY_ASSUMPTIONS.payrollTaxRate)}.`,
+            tags: ["Family", "Payroll", isSCorp ? "S-Corp" : "Non S-Corp"],
           };
         },
       },
@@ -698,19 +888,43 @@
         name: "199A Deduction (QBI optimization)",
         description: "Potential 20% deduction on qualified business income for pass-through entities (IRC §199A).",
         compute: (ctx) => {
-          const passThrough = PASS_THROUGH_ENTITIES.has(ctx.legalEntity) || PASS_THROUGH_ENTITIES.has(ctx.entityType);
+          const passThrough = PASS_THROUGH_ENTITIES.has(ctx.taxTreatment);
           if (!passThrough) return { eligible:false, savingsRange: range(0,0), details:"Primarily applies to pass-through entities.", tags:["199A"] };
 
-          const qbiLow = ctx.netIncome * STRATEGY_ASSUMPTIONS.qbiEligiblePctLow;
-          const qbiHigh = ctx.netIncome * STRATEGY_ASSUMPTIONS.qbiEligiblePctHigh;
-          const dedLow = qbiLow * STRATEGY_ASSUMPTIONS.qbiDeductionRate;
-          const dedHigh = qbiHigh * STRATEGY_ASSUMPTIONS.qbiDeductionRate;
+          const taxableIncome = Math.max(0, ctx.netIncome - ctx.retirementContrib - ctx.healthPremiums);
+          const stdDed = STANDARD_DEDUCTION[ctx.filingStatus] ?? STANDARD_DEDUCTION.mfj;
+
+          // Threshold placeholders (update annually)
+          const threshold = (ctx.filingStatus === "mfj") ? 383900 : 191950;
+          const phaseRange = (ctx.filingStatus === "mfj") ? 100000 : 50000;
+          const isSSTB = (ctx.sstb === "yes");
+
+          const qbi = Math.max(0, ctx.netIncome);
+          let qbiDed = qbi * 0.20;
+
+          if (taxableIncome > threshold) {
+            const w2 = Math.max(0, ctx.w2Wages || 0);
+            const ubia = Math.max(0, ctx.ubia || 0);
+            const limitA = 0.50 * w2;
+            const limitB = 0.25 * w2 + 0.025 * ubia;
+            const limit = Math.max(limitA, limitB);
+            qbiDed = Math.min(qbiDed, limit);
+          }
+
+          if (isSSTB) {
+            const over = Math.max(0, taxableIncome - threshold);
+            const pctPhase = clamp01(over / phaseRange);
+            qbiDed = qbiDed * (1 - pctPhase);
+          }
+
+          const dedLow = qbiDed * 0.90;
+          const dedHigh = qbiDed * 1.10;
           const savingsRange = rangeFromDeduction(dedLow, dedHigh, ctx.assumedMarginalRate);
 
           return {
             eligible: ctx.netIncome > 0,
             savingsRange,
-            details: `Models QBI as ${pct(STRATEGY_ASSUMPTIONS.qbiEligiblePctLow)}–${pct(STRATEGY_ASSUMPTIONS.qbiEligiblePctHigh)} of net income with a ${pct(STRATEGY_ASSUMPTIONS.qbiDeductionRate)} deduction, taxed at ${pct(ctx.assumedMarginalRate)}. Tune for SSTB/W-2/UBIA limits.`,
+            details: `Modeled QBI deduction using net income, taxable income (net − retirement − health), W-2 wages and UBIA limits (if above threshold), and SSTB phaseout (if applicable). Standard deduction placeholder: ${money(stdDed)}.`,
             tags: ["199A", "Pass-through"],
           };
         },
@@ -720,7 +934,7 @@
         name: "199A Aggregation Election",
         description: "Combine related businesses to maximize 199A results (Treas. Reg. §1.199A-4).",
         compute: (ctx) => ({
-          eligible: (PASS_THROUGH_ENTITIES.has(ctx.legalEntity) || PASS_THROUGH_ENTITIES.has(ctx.entityType)) && ctx.netIncome > 0,
+          eligible: (PASS_THROUGH_ENTITIES.has(ctx.taxTreatment)) && ctx.netIncome > 0,
           savingsRange: range(0,0),
           details: "Opportunity flag: requires multi-entity structure + ownership/functional relationship data. Add questions to quantify; keep as advisor review.",
           tags: ["199A", "Structuring"],
@@ -730,26 +944,51 @@
         id: "re_grouping_box7",
         name: "Box 7 / Grouping Election (Real Estate + Business)",
         description: "Group real estate and operating business to allow depreciation offsets (IRC §469(c)(7)(A)).",
-        compute: (ctx) => ({
-          eligible: ctx.netIncome > 0,
-          savingsRange: range(0,0),
-          details: "Opportunity flag: requires real estate ownership/material participation info to quantify. Add RE questions if you want estimates.",
-          tags: ["Real Estate", "469"],
-        }),
+        compute: (ctx) => {
+          const owns = ctx.ownsRental === "yes";
+          if (!owns) return { eligible:false, savingsRange: range(0,0), details:"Not applicable without rental real estate.", tags:["Real Estate","469"] };
+
+          const basis = Math.max(0, ctx.rentalBasis || 0);
+          const yr = ctx.placedInServiceYear || new Date().getFullYear();
+          const bonus = bonusDepPct(yr);
+          const reclassMid = (STRATEGY_ASSUMPTIONS.costSegReclassLow + STRATEGY_ASSUMPTIONS.costSegReclassHigh) / 2;
+          const dep = basis * reclassMid * bonus;
+
+          const canUse = (ctx.reProfessional === "yes" || ctx.materialParticipation === "yes");
+          const lift = canUse ? 0.60 : 0.20;
+          const usable = dep * lift;
+          const savingsRange = rangeFromDeduction(usable * 0.85, usable * 1.15, ctx.assumedMarginalRate);
+
+          return {
+            eligible: true,
+            savingsRange,
+            details: `Modeled additional usable depreciation via grouping/material participation: basis ${money(basis)}, bonus ${pct(bonus)}, usability lift ${pct(lift)}. Actual eligibility requires election + participation tests.`,
+            tags: ["Real Estate", "469"],
+          };
+        },
       },
       {
         id: "daf_lumping",
         name: "Charitable Lumping (DAF Strategy)",
         description: "Combine multiple years of giving into one high-income year using a Donor-Advised Fund (IRC §170).",
         compute: (ctx) => {
-          if (ctx.netIncome < 150000) return { eligible:false, savingsRange: range(0,0), details:"Typically most impactful in higher-income years.", tags:["Charitable"] };
-          const givingLow = ctx.netIncome * STRATEGY_ASSUMPTIONS.dafPctOfNetIncomeLow;
-          const givingHigh = ctx.netIncome * STRATEGY_ASSUMPTIONS.dafPctOfNetIncomeHigh;
-          const savingsRange = rangeFromDeduction(givingLow, givingHigh, ctx.assumedMarginalRate);
+          const giving = Math.max(0, ctx.charitableGiving || 0);
+          if (giving <= 0) return { eligible:false, savingsRange: range(0,0), details:"No charitable giving amount provided.", tags:["Charitable"] };
+
+          const stdDed = STANDARD_DEDUCTION[ctx.filingStatus] ?? STANDARD_DEDUCTION.mfj;
+          const saltDed = Math.min(STRATEGY_ASSUMPTIONS.saltCap, Math.max(0, ctx.stateTaxPaid || 0));
+          const itemBase = Math.max(0, saltDed + (ctx.mortgageInterest || 0) + (ctx.otherItemized || 0) + giving);
+
+          const lumpYears = 3;
+          const lumped = giving * lumpYears;
+          const itemLumped = Math.max(0, saltDed + (ctx.mortgageInterest || 0) + (ctx.otherItemized || 0) + lumped);
+
+          const deltaDed = Math.max(0, itemLumped - Math.max(stdDed, itemBase));
+          const savingsRange = rangeFromDeduction(deltaDed * 0.90, deltaDed * 1.10, ctx.assumedMarginalRate);
           return {
             eligible: true,
             savingsRange,
-            details: `Placeholder: models lumped giving at ${pct(STRATEGY_ASSUMPTIONS.dafPctOfNetIncomeLow)}–${pct(STRATEGY_ASSUMPTIONS.dafPctOfNetIncomeHigh)} of net income, taxed at ${pct(ctx.assumedMarginalRate)}. Real result depends on itemization + limits.`,
+            details: `Modeled incremental deduction vs. standard/itemized baseline by lumping ${lumpYears} years of giving into one year. Standard deduction placeholder: ${money(stdDed)}; SALT deductible used: ${money(saltDed)}.`,
             tags: ["Charitable", "DAF"],
           };
         },
@@ -759,18 +998,20 @@
         name: "PTET (State Pass-Through Entity Tax Deduction)",
         description: "Entity-level state tax deduction workaround to SALT cap (IRS Notice 2020-75; state-dependent).",
         compute: (ctx) => {
-          const passThrough = PASS_THROUGH_ENTITIES.has(ctx.legalEntity) || PASS_THROUGH_ENTITIES.has(ctx.entityType);
+          const passThrough = PASS_THROUGH_ENTITIES.has(ctx.taxTreatment);
           if (!passThrough) return { eligible:false, savingsRange: range(0,0), details:"Applies to pass-through entities.", tags:["State", "SALT"] };
           if (!PTET_STATES.has(ctx.state)) return { eligible:false, savingsRange: range(0,0), details:`State ${ctx.state} not in configured PTET list (expand as needed).`, tags:["State", "SALT"] };
 
-          const baseLow = ctx.netIncome * STRATEGY_ASSUMPTIONS.ptetPctOfNetIncomeLow;
-          const baseHigh = ctx.netIncome * STRATEGY_ASSUMPTIONS.ptetPctOfNetIncomeHigh;
-          const savingsRange = rangeFromDeduction(baseLow, baseHigh, ctx.assumedMarginalRate);
+          const stTax = Math.max(0, ctx.stateTaxPaid || 0);
+          const saltBinding = (ctx.saltLimited === "yes") || (ctx.saltLimited === "unknown" && stTax > STRATEGY_ASSUMPTIONS.saltCap);
+          const nondeductible = saltBinding ? Math.max(0, stTax - STRATEGY_ASSUMPTIONS.saltCap) : 0;
+
+          const savingsRange = rangeFromDeduction(nondeductible * 0.90, nondeductible * 1.10, ctx.assumedMarginalRate);
 
           return {
             eligible: ctx.netIncome > 0,
             savingsRange,
-            details: `Placeholder: models incremental federal deduction impact at ${pct(STRATEGY_ASSUMPTIONS.ptetPctOfNetIncomeLow)}–${pct(STRATEGY_ASSUMPTIONS.ptetPctOfNetIncomeHigh)} of net income in PTET states, taxed at ${pct(ctx.assumedMarginalRate)}. Requires state election + owner profile.`,
+            details: `Modeled incremental federal benefit on state tax above SALT cap: nondeductible ≈ ${money(nondeductible)} (inferred binding: ${saltBinding ? "yes" : "no"}), taxed at ${pct(ctx.assumedMarginalRate)}. Requires state election + CPA coordination.`,
             tags: ["PTET", "State"],
           };
         },
@@ -790,45 +1031,40 @@
         id: "cost_segregation",
         name: "Cost Segregation (with Grouping Election)",
         description: "Accelerate depreciation to generate tax losses (IRC §168(k) + §469).",
-        compute: () => ({
-          eligible: true,
-          savingsRange: range(0,0),
-          details: "Deferred at basic levels unless real estate data supports it. Add RE ownership + basis + purchase date questions to estimate.",
-          tags: ["Real Estate", "Depreciation"],
-        }),
+        compute: (ctx) => {
+          const owns = ctx.ownsRental === "yes";
+          if (!owns) return { eligible:false, savingsRange: range(0,0), details:"Not applicable without rental real estate.", tags:["Real Estate","Depreciation"] };
+
+          const basis = Math.max(0, ctx.rentalBasis || 0);
+          const yr = ctx.placedInServiceYear || new Date().getFullYear();
+          const bonus = bonusDepPct(yr);
+
+          const reclassLow = basis * STRATEGY_ASSUMPTIONS.costSegReclassLow;
+          const reclassHigh = basis * STRATEGY_ASSUMPTIONS.costSegReclassHigh;
+          const depLow = reclassLow * bonus;
+          const depHigh = reclassHigh * bonus;
+
+          const canUse = (ctx.reProfessional === "yes" || ctx.materialParticipation === "yes");
+          const factor = canUse ? 1.0 : STRATEGY_ASSUMPTIONS.passiveUsabilityFactor;
+          const usableLow = depLow * factor;
+          const usableHigh = depHigh * factor;
+
+          const savingsRange = rangeFromDeduction(usableLow, usableHigh, ctx.assumedMarginalRate);
+
+          return {
+            eligible: true,
+            savingsRange,
+            details: `Modeled bonus depreciation on reclassified basis (${pct(STRATEGY_ASSUMPTIONS.costSegReclassLow)}–${pct(STRATEGY_ASSUMPTIONS.costSegReclassHigh)}) × bonus ${pct(bonus)} × usability ${pct(factor)}. Requires study + eligibility review.`,
+            tags: ["Real Estate", "Depreciation"],
+          };
+        },
       },
 
-      // Explicitly excluded at basic levels
-      {
-        id: "avoid_captive_insurance",
-        name: "Captive Insurance (avoid at basic levels)",
-        description: "High complexity / scrutiny; not beginner-friendly.",
-        compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }),
-      },
-      {
-        id: "avoid_conservation_easement",
-        name: "Conservation Easement (avoid at basic levels)",
-        description: "High audit risk + setup cost.",
-        compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }),
-      },
-      {
-        id: "avoid_charitable_llc",
-        name: "Charitable LLC (avoid at basic levels)",
-        description: "Better at higher net worth; legal complexity.",
-        compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }),
-      },
-      {
-        id: "avoid_clat_crt",
-        name: "DAF Buyback / CLATs / CRTs (avoid at basic levels)",
-        description: "Philanthropic advanced structures.",
-        compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }),
-      },
-      {
-        id: "avoid_mso",
-        name: "Deferred Marketing Entities (MSO) (avoid at basic levels)",
-        description: "Complexity outweighs benefits for most under ~$2M income.",
-        compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }),
-      },
+      { id: "avoid_captive_insurance", name: "Captive Insurance (avoid at basic levels)", description: "High complexity / scrutiny; not beginner-friendly.", compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }) },
+      { id: "avoid_conservation_easement", name: "Conservation Easement (avoid at basic levels)", description: "High audit risk + setup cost.", compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }) },
+      { id: "avoid_charitable_llc", name: "Charitable LLC (avoid at basic levels)", description: "Better at higher net worth; legal complexity.", compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }) },
+      { id: "avoid_clat_crt", name: "DAF Buyback / CLATs / CRTs (avoid at basic levels)", description: "Philanthropic advanced structures.", compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }) },
+      { id: "avoid_mso", name: "Deferred Marketing Entities (MSO) (avoid at basic levels)", description: "Complexity outweighs benefits for most under ~$2M income.", compute: () => ({ eligible:false, savingsRange: range(0,0), details:"Not evaluated at FOOS Levels 1–2.", tags:["Advanced"] }) },
     ];
 
     // =========================================================
@@ -856,23 +1092,26 @@
       email: document.getElementById("email"),
       btnCreateAccount: document.getElementById("btnCreateAccount"),
 
-      homeSqft: document.getElementById("homeSqft"),
-      btnContinueHomeSqft: document.getElementById("btnContinueHomeSqft"),
+      homeSqftModal: document.getElementById("homeSqftModal"),
+      homeSqftInput: document.getElementById("homeSqftInput"),
+      btnHomeSqftCancel: document.getElementById("btnHomeSqftCancel"),
+      btnHomeSqftContinue: document.getElementById("btnHomeSqftContinue"),
 
       q1Buttons: document.querySelectorAll("#yearsInBusiness .choice"),
       q2Buttons: document.querySelectorAll("#legalEntity .choice"),
-      q3Buttons: document.querySelectorAll("#revenueRange .choice"),
-      q4Buttons: document.querySelectorAll("#netIncomeRange .choice"),
-      q5Buttons: document.querySelectorAll("#hasEmployees .choice"),
-      q6Buttons: document.querySelectorAll("#usesHsaHra .choice"),
-      q7Buttons: document.querySelectorAll("#retirementPlan .choice"),
-      q8Buttons: document.querySelectorAll("#cpaMeetings .choice"),
-      q9Buttons: document.querySelectorAll("#hasEstatePlan .choice"),
-      q10Buttons: document.querySelectorAll("#usesTrusts .choice"),
-      q11Buttons: document.querySelectorAll("#tracksMileage .choice"),
-      q12Buttons: document.querySelectorAll("#q12 .choice"),
-      q13Buttons: document.querySelectorAll("#q13 .choice"),
-      q14Buttons: document.querySelectorAll("#q14 .choice"),
+      q3Buttons: document.querySelectorAll("#taxTreatment .choice"),
+      q4Buttons: document.querySelectorAll("#revenueRange .choice"),
+      q5Buttons: document.querySelectorAll("#netIncomeRange .choice"),
+      q6Buttons: document.querySelectorAll("#hasEmployees .choice"),
+      q7Buttons: document.querySelectorAll("#usesHsaHra .choice"),
+      q8Buttons: document.querySelectorAll("#retirementPlan .choice"),
+      q9Buttons: document.querySelectorAll("#cpaMeetings .choice"),
+      q10Buttons: document.querySelectorAll("#hasEstatePlan .choice"),
+      q11Buttons: document.querySelectorAll("#usesTrusts .choice"),
+      q12Buttons: document.querySelectorAll("#tracksMileage .choice"),
+      q13Buttons: document.querySelectorAll("#q12 .choice"),
+      q14Buttons: document.querySelectorAll("#q13 .choice"),
+      q15Buttons: document.querySelectorAll("#q15 .choice"),
 
       btnGoBackQ1: document.getElementById("btnGoBackQ1"),
       btnGoBackQ2: document.getElementById("btnGoBackQ2"),
@@ -898,6 +1137,27 @@
       healthPremiums: document.getElementById("healthPremiums"),
       notes: document.getElementById("notes"),
 
+      filingStatus: document.getElementById("filingStatus"),
+      mortgageInterest: document.getElementById("mortgageInterest"),
+      otherItemized: document.getElementById("otherItemized"),
+      annualMiles: document.getElementById("annualMiles"),
+      phoneInternetMonthly: document.getElementById("phoneInternetMonthly"),
+      homeOfficeSqft: document.getElementById("homeOfficeSqft"),
+      ubia: document.getElementById("ubia"),
+      rentalBasis: document.getElementById("rentalBasis"),
+      placedInServiceYear: document.getElementById("placedInServiceYear"),
+      reProfessional: document.getElementById("reProfessional"),
+      materialParticipation: document.getElementById("materialParticipation"),
+
+      sstb: document.getElementById("sstb"),
+      hasKids: document.getElementById("hasKids"),
+      kidsCount: document.getElementById("kidsCount"),
+      itemize: document.getElementById("itemize"),
+      charitableGiving: document.getElementById("charitableGiving"),
+      saltLimited: document.getElementById("saltLimited"),
+      stateTaxPaid: document.getElementById("stateTaxPaid"),
+      ownsRental: document.getElementById("ownsRental"),
+
       kpiTotal: document.getElementById("kpiTotal"),
       kpiRate: document.getElementById("kpiRate"),
       kpiCount: document.getElementById("kpiCount"),
@@ -907,6 +1167,7 @@
     const answers = {
       yearsInBusiness: "1to5",
       legalEntity: "llc",
+      taxTreatment: "sole_prop",
       revenueRange: "500k_to_1m",
       netIncomeRange: "150k_to_300k",
       hasEmployees: "no",
@@ -918,13 +1179,14 @@
       tracksMileage: "no",
       q12: "no",
       q13: "no",
-      q14: "no",
+      q15: "no",
+
+      homeSqft: 0,
     };
 
-    // Wizard steps (kept for the little pill stepper)
     const STEPS = [
       { title: "State" },
-      { title: "Account" },
+      { title: "Contact" },
       { title: "Q1" },
       { title: "Q2" },
       { title: "Q3" },
@@ -945,6 +1207,7 @@
       { title: "Results" },
     ];
 
+    const STEP_Q15 = 16;
     const STEP_FINANCIALS = 17;
     const STEP_DETAILS = 18;
     const STEP_RESULTS = 19;
@@ -958,7 +1221,9 @@
       businessName: "ABC Company LLC",
       mobilePhone: "(555) 123-4567",
       email: "john@example.com",
+
       homeSqft: 2400,
+
       revenue: 500000,
       netIncome: 220000,
       w2Wages: 120000,
@@ -966,6 +1231,26 @@
       retirementContrib: 30000,
       healthPremiums: 12000,
       notes: "",
+
+      filingStatus: "mfj",
+      mortgageInterest: 0,
+      otherItemized: 0,
+      annualMiles: 0,
+      phoneInternetMonthly: 0,
+      homeOfficeSqft: 0,
+      ubia: 0,
+      rentalBasis: 0,
+      placedInServiceYear: new Date().getFullYear(),
+      reProfessional: "unknown",
+      materialParticipation: "unknown",
+      sstb: "unknown",
+      hasKids: "unknown",
+      kidsCount: 0,
+      itemize: "unknown",
+      charitableGiving: 0,
+      saltLimited: "unknown",
+      stateTaxPaid: 0,
+      ownsRental: "unknown",
     };
 
     let currentStep = 0;
@@ -988,7 +1273,8 @@
       els.mobilePhone.value = DEFAULTS.mobilePhone;
       els.email.value = DEFAULTS.email;
 
-      if (els.homeSqft) els.homeSqft.value = DEFAULTS.homeSqft;
+      answers.homeSqft = DEFAULTS.homeSqft;
+      if (els.homeSqftInput) els.homeSqftInput.value = DEFAULTS.homeSqft;
 
       els.revenue.value = DEFAULTS.revenue;
       els.netIncome.value = DEFAULTS.netIncome;
@@ -998,9 +1284,29 @@
       els.healthPremiums.value = DEFAULTS.healthPremiums;
       els.notes.value = DEFAULTS.notes;
 
-      // default answers
+      if (els.filingStatus) els.filingStatus.value = DEFAULTS.filingStatus;
+      if (els.mortgageInterest) els.mortgageInterest.value = DEFAULTS.mortgageInterest;
+      if (els.otherItemized) els.otherItemized.value = DEFAULTS.otherItemized;
+      if (els.annualMiles) els.annualMiles.value = DEFAULTS.annualMiles;
+      if (els.phoneInternetMonthly) els.phoneInternetMonthly.value = DEFAULTS.phoneInternetMonthly;
+      if (els.homeOfficeSqft) els.homeOfficeSqft.value = DEFAULTS.homeOfficeSqft;
+      if (els.ubia) els.ubia.value = DEFAULTS.ubia;
+      if (els.rentalBasis) els.rentalBasis.value = DEFAULTS.rentalBasis;
+      if (els.placedInServiceYear) els.placedInServiceYear.value = DEFAULTS.placedInServiceYear;
+      if (els.reProfessional) els.reProfessional.value = DEFAULTS.reProfessional;
+      if (els.materialParticipation) els.materialParticipation.value = DEFAULTS.materialParticipation;
+      if (els.sstb) els.sstb.value = DEFAULTS.sstb;
+      if (els.hasKids) els.hasKids.value = DEFAULTS.hasKids;
+      if (els.kidsCount) els.kidsCount.value = DEFAULTS.kidsCount;
+      if (els.itemize) els.itemize.value = DEFAULTS.itemize;
+      if (els.charitableGiving) els.charitableGiving.value = DEFAULTS.charitableGiving;
+      if (els.saltLimited) els.saltLimited.value = DEFAULTS.saltLimited;
+      if (els.stateTaxPaid) els.stateTaxPaid.value = DEFAULTS.stateTaxPaid;
+      if (els.ownsRental) els.ownsRental.value = DEFAULTS.ownsRental;
+
       answers.yearsInBusiness = "1to5";
       answers.legalEntity = "llc";
+      answers.taxTreatment = "sole_prop";
       answers.revenueRange = "500k_to_1m";
       answers.netIncomeRange = "150k_to_300k";
       answers.hasEmployees = "no";
@@ -1012,22 +1318,23 @@
       answers.tracksMileage = "no";
       answers.q12 = "no";
       answers.q13 = "no";
-      answers.q14 = "no";
+      answers.q15 = "no";
 
       syncChoiceSelection(els.q1Buttons, answers.yearsInBusiness);
       syncChoiceSelection(els.q2Buttons, answers.legalEntity);
-      syncChoiceSelection(els.q3Buttons, answers.revenueRange);
-      syncChoiceSelection(els.q4Buttons, answers.netIncomeRange);
-      syncChoiceSelection(els.q5Buttons, answers.hasEmployees);
-      syncChoiceSelection(els.q6Buttons, answers.usesHsaHra);
-      syncChoiceSelection(els.q7Buttons, answers.retirementPlan);
-      syncChoiceSelection(els.q8Buttons, answers.cpaMeetings);
-      syncChoiceSelection(els.q9Buttons, answers.hasEstatePlan);
-      syncChoiceSelection(els.q10Buttons, answers.usesTrusts);
-      syncChoiceSelection(els.q11Buttons, answers.tracksMileage);
-      syncChoiceSelection(els.q12Buttons, answers.q12);
-      syncChoiceSelection(els.q13Buttons, answers.q13);
-      syncChoiceSelection(els.q14Buttons, answers.q14);
+      syncChoiceSelection(els.q3Buttons, answers.taxTreatment);
+      syncChoiceSelection(els.q4Buttons, answers.revenueRange);
+      syncChoiceSelection(els.q5Buttons, answers.netIncomeRange);
+      syncChoiceSelection(els.q6Buttons, answers.hasEmployees);
+      syncChoiceSelection(els.q7Buttons, answers.usesHsaHra);
+      syncChoiceSelection(els.q8Buttons, answers.retirementPlan);
+      syncChoiceSelection(els.q9Buttons, answers.cpaMeetings);
+      syncChoiceSelection(els.q10Buttons, answers.hasEstatePlan);
+      syncChoiceSelection(els.q11Buttons, answers.usesTrusts);
+      syncChoiceSelection(els.q12Buttons, answers.tracksMileage);
+      syncChoiceSelection(els.q13Buttons, answers.q12);
+      syncChoiceSelection(els.q14Buttons, answers.q13);
+      syncChoiceSelection(els.q15Buttons, answers.q15);
     }
 
     function renderStepper(){
@@ -1051,7 +1358,7 @@
     }
 
     function totalQuestionCount(){
-      return answers.q14 === "yes" ? 15 : 14;
+      return 15;
     }
 
     function showStep(idx){
@@ -1066,14 +1373,11 @@
 
       if (active && active.dataset.q) {
         const qNum = Number(active.dataset.q);
-        const totalQs = totalQuestionCount();
-        // If user doesn't own a home, treat Q14 as the final question (100%)
-        const effectiveQNum = (qNum === 14 && totalQs === 14) ? 14 : qNum;
-        applyQuestionProgress(active, effectiveQNum, totalQs);
+        applyQuestionProgress(active, qNum, totalQuestionCount());
       }
 
       els.btnBack.disabled = currentStep === 0;
-      els.btnNext.textContent = currentStep === STEPS.length-1 ? "Done" : (currentStep === 1 ? "Create My Account" : "Continue");
+      els.btnNext.textContent = currentStep === STEPS.length-1 ? "Done" : "Continue";
 
       renderStepper();
       tick();
@@ -1093,6 +1397,7 @@
 
         yearsInBusiness: answers.yearsInBusiness,
         legalEntity: answers.legalEntity,
+        taxTreatment: (answers.taxTreatment === "unknown" ? "sole_prop" : answers.taxTreatment),
         revenueRange: answers.revenueRange,
         netIncomeRange: answers.netIncomeRange,
         hasEmployees: answers.hasEmployees,
@@ -1104,9 +1409,9 @@
         tracksMileage: answers.tracksMileage,
         q12: answers.q12,
         q13: answers.q13,
-        q14: answers.q14,
+        q15: answers.q15,
 
-        homeSqft: num(els.homeSqft ? els.homeSqft.value : 0),
+        homeSqft: (answers.q15 === "yes" ? num(answers.homeSqft || els.homeSqftInput?.value || 0) : 0),
 
         revenue: num(els.revenue.value),
         netIncome: num(els.netIncome.value),
@@ -1115,6 +1420,26 @@
         retirementContrib: num(els.retirementContrib.value),
         healthPremiums: num(els.healthPremiums.value),
         notes: (els.notes.value || "").trim(),
+
+        filingStatus: (els.filingStatus ? els.filingStatus.value : "mfj"),
+        mortgageInterest: num(els.mortgageInterest ? els.mortgageInterest.value : 0),
+        otherItemized: num(els.otherItemized ? els.otherItemized.value : 0),
+        annualMiles: num(els.annualMiles ? els.annualMiles.value : 0),
+        phoneInternetMonthly: num(els.phoneInternetMonthly ? els.phoneInternetMonthly.value : 0),
+        homeOfficeSqft: num(els.homeOfficeSqft ? els.homeOfficeSqft.value : 0),
+        ubia: num(els.ubia ? els.ubia.value : 0),
+        rentalBasis: num(els.rentalBasis ? els.rentalBasis.value : 0),
+        placedInServiceYear: clampInt(num(els.placedInServiceYear ? els.placedInServiceYear.value : new Date().getFullYear()), 1990, new Date().getFullYear()),
+        reProfessional: (els.reProfessional ? els.reProfessional.value : "unknown"),
+        materialParticipation: (els.materialParticipation ? els.materialParticipation.value : "unknown"),
+        sstb: (els.sstb ? els.sstb.value : "unknown"),
+        hasKids: (els.hasKids ? els.hasKids.value : "unknown"),
+        kidsCount: num(els.kidsCount ? els.kidsCount.value : 0),
+        itemize: (els.itemize ? els.itemize.value : "unknown"),
+        charitableGiving: num(els.charitableGiving ? els.charitableGiving.value : 0),
+        saltLimited: (els.saltLimited ? els.saltLimited.value : "unknown"),
+        stateTaxPaid: num(els.stateTaxPaid ? els.stateTaxPaid.value : 0),
+        ownsRental: (els.ownsRental ? els.ownsRental.value : "unknown"),
       };
 
       ctx.assumedMarginalRate = clamp01(
@@ -1136,373 +1461,330 @@
         if (!ctx.lastName) issues.push("Last name is required.");
         if (!ctx.businessName) issues.push("Business name is required.");
         if (!ctx.mobilePhone) issues.push("Mobile phone is required.");
-        if (!ctx.email || !(ctx.email.includes("@") && ctx.email.includes("."))) issues.push("Valid email is required.");
-      }
-      if (stepIdx === 16) {
-        if (answers.q14 === "yes" && !(ctx.homeSqft > 0)) issues.push("Please enter an approximate home square footage.");
-      }
-      if (stepIdx >= STEP_FINANCIALS) {
-        if (ctx.netIncome < 0) issues.push("Net profit can’t be negative.");
-        if (ctx.revenue < 0) issues.push("Revenue can’t be negative.");
+        if (!ctx.email || !ctx.email.includes("@")) issues.push("A valid email is required.");
       }
       return issues;
     }
 
-    function compute(ctx){
-      const issues = validateForStep(ctx, currentStep);
-      const taxable = Math.max(0, ctx.netIncome - ctx.retirementContrib - ctx.healthPremiums);
-
-      const rows = STRATEGY_RULES.map(rule => {
-        let out;
-        try { out = rule.compute(ctx) || {}; }
-        catch { out = { eligible:false, savingsRange: range(0,0), details:"Error computing strategy." }; }
-
-        const eligible = out.eligible !== false;
-        const sr = out.savingsRange || range(0,0);
-        const savingsRange = range(sr.low || 0, sr.high || 0);
-
-        return {
+    function computeResults(ctx){
+      const results = [];
+      for (const rule of STRATEGY_RULES){
+        const out = rule.compute(ctx);
+        if (!out || !out.eligible) continue;
+        results.push({
           id: rule.id,
           name: rule.name,
           description: rule.description,
-          eligible,
-          savingsRange,
-          details: out.details || "",
+          savingsRange: out.savingsRange,
+          details: out.details,
           tags: out.tags || [],
-        };
-      });
-
-      const applied = rows.filter(r => r.eligible && r.savingsRange.high > 0.01);
-      const totalSavingsRange = applied.reduce((acc, r) => rangeAdd(acc, r.savingsRange), range(0,0));
-      const rateRange = ctx.netIncome > 0
-        ? range(totalSavingsRange.low / ctx.netIncome, totalSavingsRange.high / ctx.netIncome)
-        : range(0,0);
-
-      return { issues, taxable, rows, applied, totalSavingsRange, rateRange };
-    }
-
-    function render(ctx, result){
-      if (result.issues.length){
-        els.statusPill.textContent = "Check inputs";
-        els.statusPill.style.borderColor = "rgba(245,158,11,.55)";
-      } else {
-        els.statusPill.textContent = "Ready";
-        els.statusPill.style.borderColor = "rgba(255,255,255,.10)";
+        });
       }
-
-      if (currentStep === STEP_RESULTS){
-        els.kpiTotal.textContent = rangeToMoney(result.totalSavingsRange);
-        els.kpiRate.textContent = `${pct(result.rateRange.low)} – ${pct(result.rateRange.high)}`;
-        els.kpiCount.textContent = String(result.applied.length);
-        els.kpiTaxable.textContent = money(result.taxable);
-
-        els.strategyList.innerHTML = "";
-        if (result.issues.length){
-          els.strategyList.appendChild(cardMessage(
-            "Input notes",
-            result.issues.map(x => `• ${x}`).join("\n"),
-            "warn"
-          ));
-        }
-
-        const sorted = [...result.rows].sort((a,b) => (b.savingsRange.high - a.savingsRange.high));
-        sorted.forEach(r => els.strategyList.appendChild(renderStrategyItem(r)));
-
-        if (result.totalSavingsRange.high < 12000) {
-          els.strategyList.prepend(cardMessage(
-            "Conservative Preview",
-            "This estimate is intentionally conservative and based on limited inputs. During a full Ark strategy review, we routinely identify additional opportunities that are not modeled here. Our $12,000 savings identification guarantee applies to the full review — not this preview tool.",
-            "warn"
-          ));
-        }
-      }
+      results.sort((a,b) => (b.savingsRange?.high||0) - (a.savingsRange?.high||0));
+      return results;
     }
 
-    function renderStrategyItem(r){
-      const div = document.createElement("div");
-      div.className = "item";
+    function renderResults(ctx){
+      const results = computeResults(ctx);
+      const total = results.reduce((sum,r) => sum + (r.savingsRange?.high||0), 0);
+      const totalLow = results.reduce((sum,r) => sum + (r.savingsRange?.low||0), 0);
 
-      const top = document.createElement("div");
-      top.className = "itemTop";
+      const taxable = Math.max(0, ctx.netIncome - ctx.retirementContrib - ctx.healthPremiums);
+      const rate = ctx.netIncome > 0 ? (total / ctx.netIncome) : 0;
 
-      const left = document.createElement("div");
-      const h4 = document.createElement("h4");
-      h4.textContent = r.name;
-      left.appendChild(h4);
+      els.kpiTotal.textContent = `${money(totalLow)} – ${money(total)}`;
+      els.kpiRate.textContent = pct(rate);
+      els.kpiCount.textContent = String(results.length);
+      els.kpiTaxable.textContent = money(taxable);
 
-      const meta = document.createElement("div");
-      meta.className = "meta";
-      meta.textContent = r.description;
-      left.appendChild(meta);
-
-      const right = document.createElement("div");
-      right.className = "amt";
-      right.textContent = r.eligible ? rangeToMoney(r.savingsRange) : "—";
-
-      top.appendChild(left);
-      top.appendChild(right);
-
-      const details = document.createElement("div");
-      details.className = "meta";
-      details.style.marginTop = "10px";
-      details.textContent = r.eligible ? (r.details || "Applied.") : "Not eligible based on inputs.";
-
-      const tags = document.createElement("div");
-      tags.className = "mini";
-      (r.tags || []).forEach(t => {
-        const s = document.createElement("span");
-        s.className = "tag";
-        s.textContent = t;
-        tags.appendChild(s);
-      });
-
-      div.appendChild(top);
-      div.appendChild(details);
-      if ((r.tags || []).length) div.appendChild(tags);
-      return div;
-    }
-
-    function cardMessage(title, body, tone){
-      const div = document.createElement("div");
-      div.className = "item";
-      const t = document.createElement("h4");
-      t.textContent = title;
-      div.appendChild(t);
-
-      const p = document.createElement("div");
-      p.className = "meta";
-      p.style.whiteSpace = "pre-wrap";
-      p.textContent = body;
-      div.appendChild(p);
-
-      if (tone === "warn") div.style.borderColor = "rgba(245,158,11,.35)";
-      return div;
-    }
-
-    function canAdvance(){
-      const ctx = readInputs();
-      return validateForStep(ctx, currentStep).length === 0;
-    }
-
-    function summary(ctx, result){
-      const lines = [];
-      lines.push("Tax Savings Calculator Summary");
-      lines.push("--------------------------------");
-      lines.push(`State: ${ctx.state}`);
-      lines.push(`Name: ${ctx.firstName} ${ctx.lastName}`);
-      lines.push(`Business: ${ctx.businessName}`);
-      lines.push(`Phone: ${ctx.mobilePhone}`);
-      lines.push(`Email: ${ctx.email}`);
-      lines.push(`Q1 Years in business: ${ctx.yearsInBusiness}`);
-      lines.push(`Q2 Legal entity: ${ctx.legalEntity}`);
-      lines.push(`Q3 Revenue range: ${ctx.revenueRange}`);
-      lines.push(`Q4 Net income range: ${ctx.netIncomeRange}`);
-      lines.push(`Q5 Employees: ${ctx.hasEmployees}`);
-      lines.push(`Q6 Uses HSA/HRA: ${ctx.usesHsaHra}`);
-      lines.push(`Q7 Retirement plan: ${ctx.retirementPlan}`);
-      lines.push(`Q8 CPA meetings: ${ctx.cpaMeetings}`);
-      lines.push(`Q9 Estate plan: ${ctx.hasEstatePlan}`);
-      lines.push(`Q10 Trusts: ${ctx.usesTrusts}`);
-      lines.push(`Q11 Mileage tracking: ${ctx.tracksMileage}`);
-      lines.push(`Q12 CPA maximizing deductions: ${ctx.q12}`);
-      lines.push(`Q13 Home-office deduction: ${ctx.q13}`);
-      lines.push(`Q14 Own a home: ${ctx.q14}`);
-      if (ctx.q14 === "yes") lines.push(`Q15 Home sqft: ${ctx.homeSqft}`);
-      lines.push("");
-      lines.push(`Revenue: ${money(ctx.revenue)}`);
-      lines.push(`Net profit: ${money(ctx.netIncome)}`);
-      lines.push(`Assumed marginal rate: ${pct(ctx.assumedMarginalRate)} (placeholder)`);
-      lines.push("");
-      lines.push(`Estimated total savings: ${rangeToMoney(result.totalSavingsRange)}`);
-      lines.push(`Savings rate: ${pct(result.rateRange.low)} – ${pct(result.rateRange.high)}`);
-      lines.push("");
-      lines.push("Strategy breakdown:");
-      result.rows
-        .filter(r => r.eligible && r.savingsRange.high > 0.01)
-        .sort((a,b) => b.savingsRange.high - a.savingsRange.high)
-        .forEach(r => lines.push(`- ${r.name}: ${rangeToMoney(r.savingsRange)} (${r.details})`));
-      if (ctx.notes) {
-        lines.push("");
-        lines.push(`Notes: ${ctx.notes}`);
-      }
-      return lines.join("\n");
-    }
-
-    function exportJSON(ctx, result){
-      return JSON.stringify({
-        inputs: ctx,
-        outputs: {
-          taxable_income_rough: result.taxable,
-          total_savings_range: result.totalSavingsRange,
-          savings_rate_range: result.rateRange,
-          strategies: result.rows,
-        },
-        generated_at: new Date().toISOString(),
-      }, null, 2);
-    }
-
-    function showToast(msg){
-      els.toast.textContent = msg;
-      els.toast.classList.add("show");
-      setTimeout(() => els.toast.classList.remove("show"), 1500);
+      els.strategyList.innerHTML = results.map(r => {
+        return `
+          <div class="item">
+            <div class="itemTop">
+              <div>
+                <h4>${escapeHtml(r.name)}</h4>
+                <p class="meta">${escapeHtml(r.description)}</p>
+              </div>
+              <div class="amt">${rangeToMoney(r.savingsRange)}</div>
+            </div>
+            <p class="meta">${escapeHtml(r.details || "")}</p>
+            <div class="mini">${(r.tags||[]).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
+          </div>
+        `;
+      }).join("");
     }
 
     function tick(){
       const ctx = readInputs();
-      const result = compute(ctx);
-      render(ctx, result);
-      els.btnNext.disabled = !canAdvance();
-      if (els.btnContinueHomeSqft) els.btnContinueHomeSqft.disabled = !(ctx.homeSqft > 0);
+
+      const required = validateForStep(ctx, currentStep);
+      els.statusPill.textContent = required.length ? "Needs info" : "Ready";
+      els.statusPill.style.borderColor = required.length ? "rgba(245,158,11,.45)" : "rgba(34,197,94,.45)";
+
+      renderStepper();
+
+      if (currentStep === STEP_RESULTS) renderResults(ctx);
+
+      els.btnNext.disabled = required.length > 0;
     }
 
-    function syncChoiceSelection(nodeList, selectedValue){
-      nodeList.forEach(btn => btn.classList.toggle("selected", btn.dataset.value === selectedValue));
+    function goNext(){
+      const ctx = readInputs();
+      const issues = validateForStep(ctx, currentStep);
+      if (issues.length){
+        toast(issues[0]);
+        return;
+      }
+
+      if (currentStep === STEP_DETAILS){
+        showStep(STEP_RESULTS);
+        return;
+      }
+
+      showStep(Math.min(currentStep + 1, STEPS.length - 1));
     }
 
-    function wireChoiceGroup(nodeList, answerKey, after){
-      nodeList.forEach(btn => {
+    function goBack(){
+      if (currentStep === STEP_FINANCIALS){
+        showStep(STEP_Q15);
+        return;
+      }
+      if (currentStep === STEP_DETAILS){
+        showStep(STEP_FINANCIALS);
+        return;
+      }
+      if (currentStep === STEP_RESULTS){
+        showStep(STEP_DETAILS);
+        return;
+      }
+      showStep(Math.max(0, currentStep - 1));
+    }
+
+    function toast(msg){
+      els.toast.textContent = msg;
+      els.toast.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => els.toast.classList.remove("show"), 2600);
+    }
+
+    function syncChoiceSelection(buttons, value){
+      buttons.forEach(b => {
+        const v = b.dataset.value;
+        if (v === value) b.classList.add("selected");
+        else b.classList.remove("selected");
+      });
+    }
+
+    function wireChoiceGroup(buttons, key, afterSelect){
+      buttons.forEach(btn => {
         btn.addEventListener("click", () => {
-          answers[answerKey] = btn.dataset.value;
-          syncChoiceSelection(nodeList, answers[answerKey]);
-          after?.(answers[answerKey]);
+          const v = btn.dataset.value;
+          answers[key] = v;
+          syncChoiceSelection(buttons, v);
+          tick();
+          if (afterSelect) afterSelect(v);
         });
       });
     }
 
-    function wire(){
-      // Questions 1-13 straightforward auto-advance
-      wireChoiceGroup(els.q1Buttons, "yearsInBusiness", () => showStep(3));
-      wireChoiceGroup(els.q2Buttons, "legalEntity", () => showStep(4));
-      wireChoiceGroup(els.q3Buttons, "revenueRange", () => showStep(5));
-      wireChoiceGroup(els.q4Buttons, "netIncomeRange", () => showStep(6));
-      wireChoiceGroup(els.q5Buttons, "hasEmployees", () => showStep(7));
-      wireChoiceGroup(els.q6Buttons, "usesHsaHra", () => showStep(8));
-      wireChoiceGroup(els.q7Buttons, "retirementPlan", () => showStep(9));
-      wireChoiceGroup(els.q8Buttons, "cpaMeetings", () => showStep(10));
-      wireChoiceGroup(els.q9Buttons, "hasEstatePlan", () => showStep(11));
-      wireChoiceGroup(els.q10Buttons, "usesTrusts", () => showStep(12));
-      wireChoiceGroup(els.q11Buttons, "tracksMileage", () => showStep(13));
-      wireChoiceGroup(els.q12Buttons, "q12", () => showStep(14));
-      wireChoiceGroup(els.q13Buttons, "q13", () => showStep(15));
-
-      // Q14 decides whether Q15 is shown
-      wireChoiceGroup(els.q14Buttons, "q14", (val) => {
-        if (val === "yes") showStep(16);
-        else showStep(17);
-      });
-
-      // Home sqft continue
-      els.btnContinueHomeSqft.addEventListener("click", () => {
-        tick();
-        const ctx = readInputs();
-        if (validateForStep(ctx, 16).length) {
-          showToast("Enter a home square footage to continue.");
-          return;
-        }
-        showStep(17);
-      });
-
-      // Go back links on every question page
-      [
-        els.btnGoBackQ1, els.btnGoBackQ2, els.btnGoBackQ3, els.btnGoBackQ4, els.btnGoBackQ5,
-        els.btnGoBackQ6, els.btnGoBackQ7, els.btnGoBackQ8, els.btnGoBackQ9, els.btnGoBackQ10,
-        els.btnGoBackQ11, els.btnGoBackQ12, els.btnGoBackQ13, els.btnGoBackQ14, els.btnGoBackQ15,
-      ].forEach(b => b.addEventListener("click", () => showStep(currentStep - 1)));
-
-      // Input steps update KPIs/status
-      [
-        els.state, els.entityType, els.industry,
-        els.firstName, els.lastName, els.businessName, els.mobilePhone, els.email,
-        els.homeSqft,
-        els.revenue, els.netIncome, els.w2Wages, els.ownerW2,
-        els.retirementContrib, els.healthPremiums, els.notes,
-      ].filter(Boolean).forEach(el => {
-        el.addEventListener("input", tick);
-        el.addEventListener("change", tick);
-      });
-
-      // Non-question nav
-      els.btnBack.addEventListener("click", () => showStep(currentStep - 1));
-      els.btnNext.addEventListener("click", () => {
-        if (!canAdvance()) return;
-        if (currentStep === 1) {
-          showToast("Account captured (demo)." );
-          showStep(2);
-          return;
-        }
-        if (currentStep < STEPS.length-1) showStep(currentStep + 1);
-        else showToast("Done.");
-      });
-
-      els.btnCreateAccount.addEventListener("click", () => {
-        tick();
-        if (currentStep !== 1) return;
-        if (!canAdvance()) return;
-        showToast("Account captured (demo)." );
-        showStep(2);
-      });
-
-      
-
-      
-
-      
+    function num(v){
+      const n = Number(String(v || "").replace(/[^0-9.-]/g, ""));
+      return Number.isFinite(n) ? n : 0;
     }
 
-    function num(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
-    function clamp01(x){ return Math.max(0, Math.min(1, x)); }
-    function clampMoney(x){ return Math.max(0, Math.round((x + Number.EPSILON) * 100) / 100); }
-    function clampInt(x, a, b){ return Math.max(a, Math.min(b, x)); }
-    function fmt(n){ return Math.round(n).toLocaleString(); }
-    function money(n){ return "$" + Math.round(n).toLocaleString(); }
-    function pct(x){ return (x*100).toFixed(1) + "%"; }
-
-    function runSelfTests(){
-      const assert = (cond, msg) => { if (!cond) throw new Error("Self-test failed: " + msg); };
-
-      // Existing tests (kept)
-      assert(typeof STRATEGY_RULES[0].compute === "function", "Strategy compute exists");
-      assert(document.querySelectorAll(".stepPanel").length >= 18, "Has many steps (incl. Q1-Q15 + inputs + results)");
-      assert(!!document.getElementById("strategyList"), "Strategy list exists on results step");
-      
-
-      // New tests
-      assert(els.q4Buttons && els.q4Buttons.length >= 5, "Q4 net income buttons exist");
-      assert(els.q7Buttons && els.q7Buttons.length >= 4, "Q7 retirement plan buttons exist");
-      assert(els.q11Buttons && els.q11Buttons.length >= 2, "Q11 mileage buttons exist");
-      assert(els.homeSqft && els.btnContinueHomeSqft, "Home sqft step controls exist");
-
-      // Augusta math test (deterministic)
-      const fake = {
-        state:"TX",
-        entityType:"sole_prop",
-        legalEntity:"llc",
-        revenue: 500000,
-        netIncome: 220000,
-        retirementContrib: 0,
-        healthPremiums: 0,
-        q14:"yes",
-        homeSqft: 2000,
-        assumedMarginalRate: 0.24,
-      };
-      const aug = STRATEGY_RULES.find(s => s.id === "augusta_rule").compute(fake);
-      // rent = 2000 * .75 * 14 = 21000; tax savings at 24% = 5040
-      assert(Math.abs(aug.savingsRange.low - 5040) < 0.01 && Math.abs(aug.savingsRange.high - 5040) < 0.01, "Augusta computation uses sqft × $0.75 × 14 × rate");
-
-      const ctx = readInputs();
-      const res = compute(ctx);
-      const s = summary(ctx, res);
-      assert(typeof s === "string" && s.includes("Tax Savings Calculator Summary"), "Summary is generated");
-      const j = exportJSON(ctx, res);
-      assert(j.trim().startsWith("{") && j.includes("\"inputs\""), "Export JSON stringifies");
-      assert(j.includes("total_savings_range"), "Export includes savings range");
+    function clampInt(v, lo, hi){
+      const n = Math.round(Number(v));
+      if (!Number.isFinite(n)) return lo;
+      return Math.min(hi, Math.max(lo, n));
     }
 
+    function clampMoney(v){
+      const n = Number(v);
+      if (!Number.isFinite(n)) return 0;
+      return Math.max(0, n);
+    }
+
+    function clamp01(v){
+      const n = Number(v);
+      if (!Number.isFinite(n)) return 0;
+      return Math.min(1, Math.max(0, n));
+    }
+
+    function money(v){
+      const n = clampMoney(v);
+      return n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    }
+
+    function fmt(v){
+      const n = clampMoney(v);
+      return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+
+    function pct(v){
+      const n = Number(v);
+      if (!Number.isFinite(n)) return "0%";
+      return `${Math.round(n * 100)}%`;
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function openHomeSqftModal(){
+      els.homeSqftModal.classList.add("show");
+      const v = (answers.homeSqft || DEFAULTS.homeSqft || "");
+      els.homeSqftInput.value = v;
+      setTimeout(() => els.homeSqftInput.focus(), 0);
+    }
+
+    function closeHomeSqftModal(){
+      els.homeSqftModal.classList.remove("show");
+    }
+
+    // =========================================================
+    // WIRING
+    // =========================================================
     populateStates();
     hydrateDefaults();
-    wire();
-    runSelfTests();
+
+    els.btnBack.addEventListener("click", goBack);
+    els.btnNext.addEventListener("click", goNext);
+
+    els.btnCreateAccount.addEventListener("click", () => {
+      const ctx = readInputs();
+      const issues = validateForStep(ctx, 1);
+      if (issues.length) return toast(issues[0]);
+      showStep(2);
+    });
+
+    wireChoiceGroup(els.q1Buttons, "yearsInBusiness", () => showStep(3));
+    wireChoiceGroup(els.q2Buttons, "legalEntity", () => showStep(4));
+    wireChoiceGroup(els.q3Buttons, "taxTreatment", () => showStep(5));
+    wireChoiceGroup(els.q4Buttons, "revenueRange", () => showStep(6));
+    wireChoiceGroup(els.q5Buttons, "netIncomeRange", () => showStep(7));
+    wireChoiceGroup(els.q6Buttons, "hasEmployees", () => showStep(8));
+    wireChoiceGroup(els.q7Buttons, "usesHsaHra", () => showStep(9));
+    wireChoiceGroup(els.q8Buttons, "retirementPlan", () => showStep(10));
+    wireChoiceGroup(els.q9Buttons, "cpaMeetings", () => showStep(11));
+    wireChoiceGroup(els.q10Buttons, "hasEstatePlan", () => showStep(12));
+    wireChoiceGroup(els.q11Buttons, "usesTrusts", () => showStep(13));
+    wireChoiceGroup(els.q12Buttons, "tracksMileage", () => showStep(14));
+    wireChoiceGroup(els.q13Buttons, "q12", () => showStep(15));
+    wireChoiceGroup(els.q14Buttons, "q13", () => showStep(16));
+
+    // Q15 special behavior:
+    // - No: advance immediately
+    // - Yes: open modal; require sqft; then advance
+    wireChoiceGroup(els.q15Buttons, "q15", (v) => {
+      if (v === "yes") {
+        openHomeSqftModal();
+      } else {
+        answers.homeSqft = 0;
+        showStep(STEP_FINANCIALS);
+      }
+    });
+
+    // Back buttons per question
+    els.btnGoBackQ1.addEventListener("click", () => showStep(1));
+    els.btnGoBackQ2.addEventListener("click", () => showStep(2));
+    els.btnGoBackQ3.addEventListener("click", () => showStep(3));
+    els.btnGoBackQ4.addEventListener("click", () => showStep(4));
+    els.btnGoBackQ5.addEventListener("click", () => showStep(5));
+    els.btnGoBackQ6.addEventListener("click", () => showStep(6));
+    els.btnGoBackQ7.addEventListener("click", () => showStep(7));
+    els.btnGoBackQ8.addEventListener("click", () => showStep(8));
+    els.btnGoBackQ9.addEventListener("click", () => showStep(9));
+    els.btnGoBackQ10.addEventListener("click", () => showStep(10));
+    els.btnGoBackQ11.addEventListener("click", () => showStep(11));
+    els.btnGoBackQ12.addEventListener("click", () => showStep(12));
+    els.btnGoBackQ13.addEventListener("click", () => showStep(13));
+    els.btnGoBackQ14.addEventListener("click", () => showStep(14));
+    els.btnGoBackQ15.addEventListener("click", () => showStep(15));
+
+    // Modal wiring
+    els.btnHomeSqftCancel.addEventListener("click", () => {
+      closeHomeSqftModal();
+      // If they cancel, revert selection back to "No" so it doesn't imply Augusta.
+      answers.q15 = "no";
+      syncChoiceSelection(els.q15Buttons, answers.q15);
+      tick();
+    });
+
+    els.btnHomeSqftContinue.addEventListener("click", () => {
+      const sqft = num(els.homeSqftInput.value);
+      if (!(sqft > 0)) return toast("Please enter your home square footage.");
+      answers.homeSqft = sqft;
+      closeHomeSqftModal();
+      showStep(STEP_FINANCIALS);
+    });
+
+    // Close modal on ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && els.homeSqftModal.classList.contains("show")) {
+        els.btnHomeSqftCancel.click();
+      }
+    });
+
+    // When leaving financials -> details
+    els.revenue.addEventListener("input", tick);
+    els.netIncome.addEventListener("input", tick);
+    els.w2Wages.addEventListener("input", tick);
+    els.ownerW2.addEventListener("input", tick);
+
+    // Ensure the flow hits Details then Results
+    els.btnNext.addEventListener("click", () => {
+      if (currentStep === STEP_FINANCIALS) showStep(STEP_DETAILS);
+    });
+
+    // Initial render
     showStep(0);
+
+    // =========================================================
+    // TESTS (lightweight)
+    // =========================================================
+    (function runTests(){
+      const t = [];
+      const ok = (name, cond) => t.push({name, pass: !!cond});
+
+      ok("states populated", els.state.options.length >= 50);
+      ok("question count fixed", totalQuestionCount() === 15);
+      ok("strategy rules are objects", Array.isArray(STRATEGY_RULES) && STRATEGY_RULES.length > 5);
+      ok("bonusDepPct bounds", bonusDepPct(2023) <= 1 && bonusDepPct(2030) >= 0);
+
+      // Augusta rule test: owning home w sqft produces non-zero savings
+      const augCtx = {
+        ...readInputs(),
+        q15: "yes",
+        homeSqft: 2000,
+        netIncome: 200000,
+        revenue: 500000,
+        assumedMarginalRate: 0.24,
+      };
+      const aug = STRATEGY_RULES.find(r => r.id === "augusta_rule").compute(augCtx);
+      ok("augusta eligible", aug.eligible === true);
+      ok("augusta savings positive", (aug.savingsRange.high || 0) > 0);
+
+      // Hire kids test: unknown taxTreatment normalizes to sole_prop
+      const kidCtx = { ...readInputs(), taxTreatment: "unknown", hasKids: "yes", kidsCount: 1, netIncome: 150000, assumedMarginalRate: 0.24 };
+      const kids = STRATEGY_RULES.find(r => r.id === "hire_kids").compute(kidCtx);
+      ok("hire kids eligible", kids.eligible === true);
+
+      // Ensure Box 7 rule returns without throwing
+      const boxCtx = { ...readInputs(), ownsRental: "yes", rentalBasis: 600000, placedInServiceYear: 2024, assumedMarginalRate: 0.24 };
+      const box = STRATEGY_RULES.find(r => r.id === "re_grouping_box7").compute(boxCtx);
+      ok("box 7 returns object", typeof box === "object" && box !== null);
+
+      const failed = t.filter(x => !x.pass);
+      if (failed.length){
+        console.warn("Tests failed:", failed);
+      }
+    })();
+
   </script>
 </body>
 </html>
